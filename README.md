@@ -1,0 +1,1 @@
+# -codigosDeStatusHTTP_RFC2616
