@@ -1,4 +1,4 @@
-## 10.1 Informamções 1xx
+## 10.1 Informações 1xx
 
 - **100 Continue:**
   - Indica que o cliente pode continuar com sua requisição.
