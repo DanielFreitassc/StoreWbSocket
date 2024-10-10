@@ -1,85 +1,55 @@
 package com.example.demo.services;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.example.demo.dtos.ProductDTO;
+import com.example.demo.dtos.ProductRequestDto;
+import com.example.demo.dtos.ProductResponseDto;
+import com.example.demo.mappers.ProductMapper;
 import com.example.demo.models.ProductEntity;
 import com.example.demo.repositories.ProductRepository;
 
+import lombok.RequiredArgsConstructor;
+
 @Service
+@RequiredArgsConstructor
 public class ProductService {
-    @Autowired
-    private ProductRepository productRepository;
-   
-    public ResponseEntity<ProductDTO> create(ProductDTO productDTO) {
-        ProductEntity productEntity = new ProductEntity();
-        productEntity.setName(productDTO.getName());
-        productEntity.setPrice(productDTO.getPrice());
-        productRepository.save(productEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(productDTO);
+    private final ProductRepository productRepository;
+    private final ProductMapper productMapper;
+
+
+    public ResponseEntity<ProductResponseDto> create(ProductRequestDto productDTO) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(productMapper.toDto(productRepository.save(productMapper.toEntity(productDTO))));
     }
     
-    public ResponseEntity<List<ProductDTO>> getAll() {
-        List<ProductEntity> productEntities = productRepository.findAll();
-
-        if(productEntities.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        }
-
-        List<ProductDTO> productDTOs = productEntities.stream().map(productEntity -> {
-            ProductDTO productDTO = new ProductDTO();
-            productDTO.setName(productEntity.getName());
-            productDTO.setPrice(productEntity.getPrice());
-            return productDTO;
-        }).collect(Collectors.toList());
-
-        return ResponseEntity.status(HttpStatus.OK).body(productDTOs);
+    public ResponseEntity<List<ProductResponseDto>> getAll() {
+        return ResponseEntity.status(HttpStatus.OK).body(productRepository.findAll().stream().map(productMapper::toDto).toList());
     }
 
-    public ResponseEntity<ProductDTO> getById(Long id) {
+    public ResponseEntity<ProductResponseDto> getById(Long id) {
         Optional<ProductEntity> product = productRepository.findById(id);
-        
-        if(product.isEmpty()) {
-           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProductDTO("Nenhum produto com este ID",0.0));
-        }
-
-        ProductEntity productEntity = product.get();
-        ProductDTO productDTO = new ProductDTO();
-        productDTO.setName(productEntity.getName());
-        productDTO.setPrice(productEntity.getPrice());
-        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+        if(product.isEmpty()) throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Nenhum produto com este ID");
+        return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product.get()));
     }
 
-    public ResponseEntity<ProductDTO> update(Long id, ProductDTO productDTO) {
+    public ResponseEntity<ProductResponseDto> update(Long id, ProductRequestDto productDTO) {
         Optional<ProductEntity> product = productRepository.findById(id);
-        if(product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProductDTO("Nenhum produto com este ID",0.0));
-        }
+        if(product.isEmpty()) throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Nenhum produto com este ID");
         ProductEntity productEntity = product.get();
-        productEntity.setName(productDTO.getName());
-        productEntity.setPrice(productDTO.getPrice());
+        productEntity.setId(id);
         productRepository.save(productEntity);
-        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(productEntity));
     }
 
-    public ResponseEntity<ProductDTO> delete(Long id) {
+    public ResponseEntity<ProductResponseDto> delete(Long id) {
         Optional<ProductEntity> product = productRepository.findById(id);
-        if(product.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ProductDTO("Nenhum produto com este ID",0.0));
-        }
-        ProductEntity productEntity = product.get();
-        ProductDTO productDTO = new ProductDTO();
+        if(product.isEmpty()) throw  new ResponseStatusException(HttpStatus.NOT_FOUND,"Nenhum produto com este ID");
         productRepository.delete(product.get());
-        productDTO.setName(productEntity.getName());
-        productDTO.setPrice(productEntity.getPrice());
-        return ResponseEntity.status(HttpStatus.OK).body(productDTO);
+        return ResponseEntity.status(HttpStatus.OK).body(productMapper.toDto(product.get()));
     }
 }

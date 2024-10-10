@@ -13,39 +13,41 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.demo.dtos.ProductDTO;
+import com.example.demo.dtos.ProductRequestDto;
+import com.example.demo.dtos.ProductResponseDto;
 import com.example.demo.services.ProductService;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("products")
 public class ProductController {
-    @Autowired
-    private ProductService productService;
+    private final ProductService productService;
 
     @PostMapping
-    public ResponseEntity<ProductDTO> create(@RequestBody @Valid ProductDTO productDTO) {
+    public ResponseEntity<ProductResponseDto> create(@RequestBody @Valid ProductRequestDto productDTO) {
         return productService.create(productDTO);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ProductDTO> getById(@PathVariable Long id) {
+    public ResponseEntity<ProductResponseDto> getById(@PathVariable Long id) {
        return productService.getById(id);
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductDTO>> getAll() {
+    public ResponseEntity<List<ProductResponseDto>> getAll() {
         return productService.getAll();
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<ProductDTO> delete(@PathVariable Long id) {
+    public ResponseEntity<ProductResponseDto> delete(@PathVariable Long id) {
         return productService.delete(id);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody @Valid ProductDTO productDTO) {
+    public ResponseEntity<ProductResponseDto> update(@PathVariable Long id, @RequestBody @Valid ProductRequestDto productDTO) {
         return productService.update(id, productDTO);
     }
 } 
