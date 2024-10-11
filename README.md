@@ -59,7 +59,7 @@
 
 
 ## PUT
-```json
+```yml
 /products/{id}
 ```
 ## Payload
@@ -83,7 +83,7 @@
 ---
 
 ## DELETE
-```json
+```yml
 /products/{id}
 ```
 
