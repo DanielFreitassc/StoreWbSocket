@@ -6,7 +6,7 @@
 /products
 ```
 ## Payload
-```yml
+```json
 {
   "name":"Produto tal tal",
   "price":200
@@ -14,7 +14,7 @@
 ```
 ## Resultado esperado
 > Response 201 Created 
-```yml
+```json
 {
   "name":"Produto tal tal",
   "price":200
@@ -29,7 +29,7 @@
 
 ## Resultado esperado
 > Response 200 OK 
-```yml
+```json
 {
   "id": 1, 
   "name":"Produto tal tal",
@@ -47,7 +47,7 @@
 
 ## Resultado esperado
 > Response 200 OK 
-```yml
+```json
 {
   "id": 1, 
   "name":"Produto tal tal",
@@ -59,11 +59,11 @@
 
 
 ## PUT
-```yml
+```json
 /products/{id}
 ```
 ## Payload
-```yml
+```json
 {
   "name":"Produto atualizado",
   "price":201
@@ -72,7 +72,7 @@
 ```
 ## Resultado esperado
 > Response 200 OK 
-```yml
+```json
 {
   "id": 1, 
   "name":"Produto atualizado",
@@ -83,13 +83,13 @@
 ---
 
 ## DELETE
-```yml
+```json
 /products/{id}
 ```
 
 ## Resultado esperado
 > Response 200 OK 
-```yml
+```json
 {
   "id": 1, 
   "name":"Produto atualizado",
